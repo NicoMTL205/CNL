@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan de quai — Club Nautique de Longueuil 2026</title>
+<style>
+  :root {
+    --navy: #1F4E79;
+    --blue: #2E75B6;
+    --blue-light: #E6F1FB;
+    --green: #1D9E75;
+    --green-bg: #E1F5EE;
+    --green-text: #04342C;
+    --amber: #BA7517;
+    --amber-bg: #FAEEDA;
+    --amber-text: #412402;
+    --red: #E24B4A;
+    --red-bg: #FCEBEB;
+    --red-text: #501313;
+    --gray: #888780;
+    --gray-bg: #F1EFE8;
+    --gray-text: #5F5E5A;
+    --border: #D3D1C7;
+    --bg: #F4F6F9;
+    --white: #FFFFFF;
+    --text: #1a1a2e;
+    --muted: #5a6a7a;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  header h1 { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+  header .sub { font-size: 11px; color: #BDD7EE; margin-top: 1px; }
+
+  /* ── LAYOUT ── */
+  .layout { display: flex; min-height: calc(100vh - 56px); }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: white;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 56px;
+    height: calc(100vh - 56px);
+    overflow: hidden;
+  }
+  .sidebar-top { padding: 14px; border-bottom: 1px solid var(--border); }
+
+  .search-box {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color .15s;
+  }
+  .search-box:focus { border-color: var(--blue); }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  .stat { background: var(--bg); border-radius: var(--radius); padding: 6px 10px; text-align: center; }
+  .stat-n { font-size: 18px; font-weight: 600; color: var(--navy); }
+  .stat-l { font-size: 10px; color: var(--muted); }
+
+  /* Nav tabs */
+  .nav-section { padding: 10px 14px 6px; }
+  .nav-label { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+  .nav-tabs { display: flex; flex-direction: column; gap: 2px; }
+  .nt {
+    padding: 7px 10px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--muted);
+    border: none;
+    background: none;
+    text-align: left;
+    transition: all .12s;
+    width: 100%;
+  }
+  .nt:hover { background: var(--bg); color: var(--text); }
+  .nt.on { background: var(--blue-light); color: var(--navy); font-weight: 600; }
+  .sub-tabs { padding-left: 12px; margin-top: 2px; display: none; }
+  .sub-tabs.open { display: flex; flex-direction: column; gap: 2px; }
+  .sub-tabs .nt { font-size: 11px; }
+
+  /* Legend */
+  .legend { padding: 12px 14px; border-top: 1px solid var(--border); margin-top: auto; }
+  .legend-title { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+  .leg { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 11px; color: var(--muted); }
+  .leg-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── MAIN ── */
+  .main { flex: 1; padding: 20px; overflow-y: auto; }
+
+  .section-block {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-count {
+    font-size: 10px;
+    background: var(--blue-light);
+    color: var(--blue);
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 500;
+  }
+  .quais-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* ── TUILES ── */
+  .qb {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 74px;
+    min-height: 52px;
+    padding: 5px 4px;
+    border-radius: 7px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: transform .1s, box-shadow .1s;
+    text-align: center;
+    line-height: 1.25;
+    position: relative;
+  }
+  .qb:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .qb.selected { outline: 2.5px solid var(--navy); outline-offset: 2px; }
+  .qb.dim { opacity: .15; pointer-events: none; }
+  .q-num { font-size: 9px; font-weight: 600; opacity: .6; margin-bottom: 2px; }
+  .q-name { font-size: 10px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 68px; }
+
+  .tv { background: var(--green-bg);  border-color: var(--green);  color: var(--green-text); }
+  .tm { background: var(--amber-bg);  border-color: var(--amber);  color: var(--amber-text); }
+  .tu { background: var(--red-bg);    border-color: var(--red);    color: var(--red-text); }
+  .tl { background: var(--gray-bg);   border-color: var(--border); color: var(--gray-text); font-style: italic; }
+
+  /* Bouées rondes */
+  .mb { border-radius: 50%; width: 60px; height: 60px; min-height: unset; padding: 4px; }
+  .mb .q-name { font-size: 9px; }
+
+  /* ── PANNEAU DÉTAIL ── */
+  .panel {
+    position: fixed;
+    right: 0;
+    top: 56px;
+    width: 280px;
+    height: calc(100vh - 56px);
+    background: white;
+    border-left: 1px solid var(--border);
+    padding: 0;
+    transform: translateX(100%);
+    transition: transform .2s ease;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .panel.open { transform: translateX(0); }
+
+  .panel-header {
+    background: var(--navy);
+    color: white;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .panel-place { font-size: 10px; color: #BDD7EE; margin-bottom: 3px; }
+  .panel-name { font-size: 16px; font-weight: 600; line-height: 1.2; }
+  .panel-close {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 10px;
+    transition: background .1s;
+  }
+  .panel-close:hover { background: rgba(255,255,255,0.25); }
+
+  .panel-badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin: 12px 16px 0;
+  }
+
+  .panel-body { padding: 12px 16px; overflow-y: auto; flex: 1; }
+
+  .prow {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--bg);
+    gap: 8px;
+  }
+  .prow:last-child { border-bottom: none; }
+  .pk { font-size: 11px; color: var(--muted); flex-shrink: 0; }
+  .pv { font-size: 12px; font-weight: 600; color: var(--text); text-align: right; word-break: break-word; }
+
+  .tel-block {
+    background: var(--bg);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    margin: 12px 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .tel-num { font-size: 15px; font-weight: 600; color: var(--navy); letter-spacing: .03em; }
+  .tel-copy {
+    font-size: 11px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    cursor: pointer;
+    background: white;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: all .12s;
+  }
+  .tel-copy:hover { border-color: var(--blue); color: var(--blue); }
+  .tel-copy.ok { border-color: var(--green); color: var(--green); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .panel { width: 100%; }
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+  .empty-icon { font-size: 32px; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Club Nautique de Longueuil</h1>
+    <div class="sub">Plan de quai interactif — Saison 2026</div>
+  </div>
+  <input class="search-box" style="width:220px" id="srch" type="text" placeholder="Rechercher bateau, propriétaire..." oninput="go()">
+</header>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="stats" id="stats"></div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Navigation</div>
+      <div class="nav-tabs" id="nav"></div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-title">Légende</div>
+      <div class="leg"><div class="leg-dot" style="background:#9FE1CB;border:1px solid #1D9E75"></div>Voilier</div>
+      <div class="leg"><div class="leg-dot" style="background:#FAC775;border:1px solid #BA7517"></div>Moteur</div>
+      <div class="leg"><div class="leg-dot" style="background:#F09595;border:1px solid #E24B4A"></div>Inconnu</div>
+      <div class="leg"><div class="leg-dot" style="background:#D3D1C7;border:1px solid #B4B2A9"></div>Libre / vide</div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main" id="main"></main>
+
+</div>
+
+<!-- Panneau détail -->
+<div class="panel" id="panel">
+  <div class="panel-header">
+    <div>
+      <div class="panel-place" id="pp-place"></div>
+      <div class="panel-name" id="pp-name"></div>
+    </div>
+    <button class="panel-close" onclick="closePan()">✕</button>
+  </div>
+  <div id="pp-badge"></div>
+  <div class="panel-body" id="pp-body"></div>
+</div>
+
+<script>
+const DATA = [
+  ["Baie Ouest","Côté Ouest","Q0","14","LIBRE","","","Inconnu","","","Inconnu",""],
+  ["Baie Ouest","Côté Ouest","Q1","14","LIBRE","","","Inconnu","","","Inconnu",""],
+  ["Baie Ouest","Côté Ouest","Q2","14","AQUABON","18000","40 x 12","Voilier","MARIO LEBLOND","514-258-1219","Membre Hivernant","O18"],
+  ["Baie Ouest","Côté Ouest","Q3","14","LADY SUE","25000","39,3 x 13","Moteur","SUZANNE ALBERT","514-809-1025","Membre Hivernant",""],
+  ["Baie Ouest","Côté Ouest","Q4","14","LA GAILLARDE","10000","36,10 x 12,5","Voilier","MARCEL BEAULIEU","514-451-2706","Membre Hivernant","E26"],
+  ["Baie Ouest","Côté Ouest","Q5","14","GABALTO","13000","33,5 x 9,5","Voilier","ANDRÉ GAGNÉ","514-978-3555","Membre Hivernant","O12"],
+  ["Baie Ouest","Côté Ouest","Q6","14","ARGO V","23000","42,1 x 12,6","Voilier","CLAUDE DESAULNIERS","","Membre Hivernant","E10"],
+  ["Baie Ouest","Côté Est","Q7B","22","MOTEUR QC 7270641","5300","18,9 x 8","Moteur","WENHAO CHENG","514-660-3188","Locataire Hivernant","P26"],
+  ["Baie Ouest","Côté Est","Q8T","25.6","MOTEUR QC931503","5200","21 x 8,4","Moteur","MARC ANDRE VACHON","514-442-2544","Locataire Hivernant","P12"],
+  ["Baie Ouest","Côté Est","Q8B","25.6","CROISEUR","4500","27 x 8","Moteur","MARIO BEAUSOLEIL","514-318-1086","Locataire",""],
+  ["Baie Ouest","Côté Est","Q9T","24.83","EMOTION","4500","20,6 x 8,6","Moteur","MICHEL BERGERON","450-928-2170","Locataire",""],
+  ["Baie Ouest","Côté Est","Q9B","24.83","CAROLINE","","","Inconnu","JOSEPH DUMIT","514-862-2020","Locataire",""],
+  ["Baie Ouest","Côté Est","Q10T","23","BLIND DATE VOILIER","5000","26 x 8","Voilier","THOMAS BOHDAL","514-247-1340","Locataire Hivernant","O0"],
+  ["Baie Ouest","Côté Est","Q10B","23","MOTEUR QC2047430","5000","25 x 8,6","Moteur","JONATHAN VENDITTI","514-528-3232","Locataire Hivernant","E25"],
+  ["Baie Ouest","Côté Est","Q11T","24","L'ÉTOILE QC6437796","2300","26 x 8 x 1,5","Voilier","MARTIN VALLIÈRES","450-674-1992","Locataire Hivernant","Cont"],
+  ["Baie Ouest","Côté Est","Q11B","24","GUSTO","4350","28,10 x 8 x 4,5","Voilier","ODILE JOUANNEAU","514-519-7070","Membre Hivernant","O3"],
+  ["Baie Ouest","Côté Est","Q12T","30","AVANTI","7000","24 x 9,5 x 3","Voilier","PIERRE-HUGHES FAULKNER","514-297-0603","Locataire Hivernant","P11"],
+  ["Baie Ouest","Côté Est","Q12B","30","SINEDIE","5500","28,6 x 9,6","Moteur","SIMON LAMOTHE","514-571-9300","Locataire Hivernant","O4"],
+  ["Baie Ouest","Côté Est","Q13T","28.58","ZEN IT","10000","31 x 9,5 x 5","Voilier","ERIC LAROSE","438-883-7744","Locataire Hivernant","O32"],
+  ["Baie Ouest","Côté Est","Q13B","28.58","SIMAGRÉE","5500","26,6 x 9","Voilier","MARTIN BEAUCHESNE","514-347-9996","Membre Hivernant","O5"],
+  ["Baie Ouest","Côté Est","Q14T","28.33","AQUABA 50E83180","9000","29,3 x 8 x 5","Voilier","GHISLAIN GRÉGOIRE","514-980-0525","Locataire Hivernant","E8"],
+  ["Baie Ouest","Côté Est","Q14B","28.33","FARFELU","5500","26,6 x 9 x 5","Inconnu","AUGUSTIN SIMARD","438-304-5252","Membre Hivernant","O11"],
+  ["Baie Ouest","Côté Est","Q15T","28.33","ZUBBULAH ABDUL","6000","25 x 9 x 5","Inconnu","KARIM","438-939-6990","Locataire",""],
+  ["Baie Ouest","Côté Est","Q15B","28.33","HAIDUC","","30,6 x 8","Voilier","EUGÈNE NEGRUT","514-629-6546","Membre Hivernant","O6"],
+  ["Baie Ouest","Côté Est","Q16T","24.6","HUNTER CRUISER","7500","31 x 10,5","Moteur","MACCAULL W. ALEXANDER","902-266-4323","Locataire Hivernant","O26"],
+  ["Baie Ouest","Côté Est","Q16B","24.6","HUNTER 49D3499","8000","30,10 x 11","Voilier","POPA SILVIUS","514-581-9404","Locataire Hivernant","O36"],
+  ["Baie Ouest","Côté Est","Q17T","29.33","COLBORUE 42E10561","8000","32,3 x 10","Moteur","JOHNNY ABRAHAM","514-616-0201","Locataire Hivernant","E16"],
+  ["Baie Ouest","Côté Est","Q17B","29.33","VOILIER","3100","22 x 8 x 4","Voilier","YAN LAJEUNESE","819-578-2705","Locataire",""],
+  ["Baie Ouest","Côté Est","Q18T","24.6","BLUE MAX","4300","28,5 x 9 x 4","Voilier","JACQUES LÉGER","438-923-4115","Locataire Hivernant","O2"],
+  ["Baie Ouest","Côté Est","Q18B","24.6","LIBRE","","","Inconnu","","","Inconnu",""],
+  ["Baie Ouest","Côté Est","Q19T","27","REINA DEL NORTE","12000","37 x 10","Moteur","GEATAN POMPOZZI","514-378-6744","Locataire",""],
+  ["Baie Est","Côté Ouest","Q30T","24.83","CROISEUR 10D101634","1200","16 x 6 x 3","Moteur","ROBERT MONGEAU","514-771-1867","Locataire",""],
+  ["Baie Est","Côté Ouest","Q31T","24.83","4 PLAY","5500","24,5 x 8,5","Inconnu","MAURICIO DI FRANCESCO","514-502-0846","Membre Hivernant","P22"],
+  ["Baie Est","Côté Ouest","Q31B","24.83","BAYLINER","3000","21 x 8","Moteur","PATRICK SOUSA-NEIVA","514-576-7286","Locataire",""],
+  ["Baie Est","Côté Ouest","Q32T","24.67","","","","Inconnu","DANIEL MUTANDA","438-992-1891","Locataire",""],
+  ["Baie Est","Côté Ouest","Q32B","24.67","CHALOUPE QC327170","3500","25 x 6","Moteur","RICKY BOYD","514-967-9208","Locataire",""],
+  ["Baie Est","Côté Ouest","Q33T","24.75","MOTEUR 62D21635","4500","18 x 8,6","Moteur","ALEC DAIGLE","514-742-5351","Locataire Hivernant","P27"],
+  ["Baie Est","Côté Ouest","Q33B","24.75","CROISEUR","6700","32 x 8 x 2","Moteur","FARID AHMAD HUSSAINYAR","514-244-3651","Locataire",""],
+  ["Baie Est","Côté Ouest","Q34T","24.67","WELLCRAFT CUDDY","2000","20 x 7,8","Moteur","BENJAMIN CAPLETTE","514-884-5704","Locataire",""],
+  ["Baie Est","Côté Ouest","Q34B","24.67","MOTEUR QC365220","2000","23,6 x 8","Moteur","LAURENT DESBIENS","514-557-8004","Locataire",""],
+  ["Baie Est","Côté Ouest","Q35T","24.58","CAMPION ALLANTE 21","4000","21 x 7,5","Moteur","BÉATRICE PROULX","438-524-8960","Locataire",""],
+  ["Baie Est","Côté Ouest","Q35B","24.58","FOREVER LOST","4000","22,6 x 8","Inconnu","DANIEL SUNOL","514-809-2029","Locataire Hivernant","ENC"],
+  ["Baie Est","Côté Ouest","Q36T","35.5","ALEGRIA","16300","36,10 x 11","Moteur","ANDRÉ GIRARD","514-889-8145","Membre Hivernant","P14"],
+  ["Baie Est","Côté Ouest","Q36B","35.5","SUNNY ISLE","28000","45,7 x 14","Moteur","MICHEL COMTOIS","514-212-1000","Membre Hivernant","P13"],
+  ["Baie Est","Côté Ouest","Q37T","35.58","BRIN DE FOLIE","18000","35,10 x 12 x 4,6","Voilier","BENOÎT GOYER","514-233-5045","Membre Hivernant","O15"],
+  ["Baie Est","Côté Ouest","Q37B","35.58","SAY RAY 310","11000","37,5 x 11,5","Inconnu","GABRIEL LANOUETTE","514-476-0661","Locataire Hivernant","P-15"],
+  ["Baie Est","Côté Ouest","Q38T","35.67","HAVRE D'AMOUR","7000","27,9 x 7","Moteur","GILBERT DUPONT","514-248-4992","Membre Hivernant","P7"],
+  ["Baie Est","Côté Ouest","Q38B","35.67","PAXA","10600","31 x 10","Moteur","LUC POULIN","514-944-5165","Locataire",""],
+  ["Baie Est","Côté Ouest","Q39T","35.75","MARISTEF","11000","36 x 11","Voilier","ALEX MASSÉ","514-915-4324","Locataire Hivernant","O10"],
+  ["Baie Est","Côté Ouest","Q39B","35.75","VOILIER","11400","32 x 12","Voilier","JESSIE PASSARELLI","","Locataire Hivernant","O31"],
+  ["Baie Est","Côté Ouest","Q40T","35.67","MOTEUR QC5951259","10000","38,6 x 13","Moteur","MARYSE HARVEY DAN","514-806-0674","Membre Hivernant","P08"],
+  ["Baie Est","Côté Ouest","Q40B","35.67","WHITE EAGLE","10000","32 x 10,5","Inconnu","CHRISTIAN MARTINEAU","514-303-7788","Locataire Hivernant","O33"],
+  ["Baie Est","Côté Ouest","Q41T","35.83","PANDORA II","10000","32 x 10","Voilier","ERIC READ","438-887-7377","Locataire Hivernant","O29"],
+  ["Baie Est","Côté Ouest","Q41B","35.83","HADDOCK","10600","33,10 x 10","Voilier","THIERRY ALAMY","514-730-8105","Locataire Hivernant","O28"],
+  ["Baie Est","Côté Ouest","Q42T","35.5","CONCORDE I","18000","39,6 x 12,6","Moteur","FRANÇOIS LANGEVIN","514-918-0893","Membre Hivernant","P16"],
+  ["Baie Est","Côté Ouest","Q42B","35.5","VAHINÉ","11500","33,6 x 11","Voilier","JEAN DUVAL","438-373-4626","Membre Hivernant","O8"],
+  ["Baie Est","Côté Ouest","Q43T","35.6","RABELOS","10000","35,6 x 9","Voilier","RAYMOND LAVOIE","514-914-0025","Membre Hivernant","O7"],
+  ["Baie Est","Côté Ouest","Q43B","35.6","VISION L VOILIER","10000","34,10 x 10 x 6","Voilier","DANIEL LAJOIE","438-406-8898","Membre Hivernant","E18"],
+  ["Baie Est","Côté Ouest","Q44T","35.66","L'ESPÉRANCE","31000","49 x 12,5","Moteur","PHILIPPE BARTICIONNI","438-502-0380","Locataire Hivernant","P23"],
+  ["Baie Est","Côté Ouest","Q44B","35.66","AYE BECCA","14700","35 x 11,6","Voilier","FRANÇOIS CÔTÉ","514-713-4444","Membre Hivernant","O16"],
+  ["Baie Est","Côté Ouest","Q45T","35.25","PRINCESS KALIMA","20000","43 x 14","Moteur","BRYAN PETTERSON","514-655-0868","Membre Hivernant","P24"],
+  ["Baie Est","Côté Ouest","Q45B","35.25","L'ENTRE-TEMPS","7500","38,1 x 11","Moteur","MONIQUE DION","514-232-6549","Membre Hivernant","P5"],
+  ["Baie Est","Côté Est","Q46B","","NASEMA MOTEUR","35000","28,4 x 9","Moteur","PIERRE-PAUL DUBÉ","418-446-3078","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q47T","","FOUR WINNS H180","3700","18 x 8","Moteur","JEROME COURTURIER","438-827-1050","Locataire",""],
+  ["Baie Est","Côté Est","Q47B","","QC4379871 ROUGE","","26,2 x 7","Moteur","GUAIYARU BUSTILLOS","514-661-6661","Locataire",""],
+  ["Baie Est","Côté Est","Q48T","","LARSON","3500","22 x 6,6","Moteur","HENRY AGUILAR","514-966-2458","Locataire",""],
+  ["Baie Est","Côté Est","Q48B","","L'ESS'EAU","5700","25,8 x 8,4","Moteur","HAKIM TAIBI","514-604-9060","Locataire",""],
+  ["Baie Est","Côté Est","Q49T","","QC4414912 ROUGE BLANC","2500","25 x 8","Moteur","MICHEL HEBERT","514-245-2163","Locataire",""],
+  ["Baie Est","Côté Est","Q49B","","CUDY CABIN","4000","24 x 8","Moteur","SERGE LECLERC","514-604-9060","Locataire",""],
+  ["Baie Est","Côté Est","Q50T","","CRUISER MERCURE","10000","20 x 9,5","Moteur","ANDERSON FISHTA","","Locataire",""],
+  ["Baie Est","Côté Est","Q50B","","BOWRIDER","","25 x 8","Moteur","SAMI GUINDI","514-577-1410","Locataire",""],
+  ["Baie Est","Côté Est","Q51T","","BERLIOZ","12000","35,10 x 12 x 3","Moteur","DAVE LEVESQUE","514-712-9052","Membre Hivernant",""],
+  ["Baie Est","Côté Est","Q51B","","AVANTI","","36,5 x 9","Moteur","LUC DUPONT","514-467-5248","Membre Hivernant",""],
+  ["Baie Est","Côté Est","Q52T","38.33","SOLANO I","25000","41,1 x 12","Moteur","STEPHEN BLANCHARD","514-946-0089","Membre Hivernant",""],
+  ["Baie Est","Côté Est","Q52B","38.33","BELLA VITA MOTEUR","12000","37 x 12","Moteur","KEVIN GAGNON","514-229-7096","Locataire",""],
+  ["Baie Est","Côté Est","Q53T","37.58","MOTEUR","11500","34,7 x 11 x 3","Moteur","MICHEL LIZOTTTE","514-660-8227","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q53B","37.58","LÉTERNELL LIBERTÉ LL","25000","43,4 x 13 x 4","Moteur","SAMUEL LAROUCHE","438-341-7082","Membre Hivernant",""],
+  ["Baie Est","Côté Est","Q54T","37.58","GALEO","19000","38,6 x 13,6","Moteur","CHRISTIAN GIGUÈRE","514-465-7952","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q54B","37.58","VAHINE II","19000","37,9 x 11 x 5","Voilier","NICOLAS WASMER","514-910-6426","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q55T","37.67","MOTEUR","13000","38,1 x 13","Moteur","NIKOLAI KONONOV","514-998-4594","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q55B","37.67","CAROLYN II","22000","40,10 x 12 x 4","Moteur","RENE DEVETTE","514-953-0811","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q56T","41.42","MOTEUR","14000","38 x 10","Moteur","MAXIME FAILLE","514-777-2984","Locataire",""],
+  ["Baie Est","Côté Est","Q56B","41.42","ANDROS VOILIER","22000","42,2 x 12 x 4","Voilier","JEAN LOUIS LEVESQUE","514-442-7480","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q57T","37.5","NIVANA MOTEUR","18000","43,1 x 13 x 3","Moteur","ANDRE BONNEAU","514-582-4822","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q57B","37.5","GEMINGA","14500","36,6 x 11","Moteur","BERNARD POULIN","514-719-8447","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q58T","37.5","BATEAU LE FLO","10000","30 x 9","Inconnu","PATRICK BLAINE","514-531-4931","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q58B","37.5","MOTEUR GALINA","6000","34,10 x 10","Moteur","RICHARD MONETTE","514-918-5167","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q59T","37.25","SEAJULL II VOILIER","15000","36,6 x 3,5","Voilier","MARTIN COUTURE","514-444-1056","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q59B","37.25","SEA RAY 290","10500","33 x 10","Moteur","ANNI MUSTAPHA","514-862-8666","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q60T","37.5","SAUDADE VOILIER BER","12500","34 x 11,5","Voilier","PASCAL BAUDELOT","819-431-4763","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q60B","37.5","STUCKIN PARADISE II","35000","46,2 x 14 x 6,7","Moteur","MATHURIN ROBERT","450-670-8291","Locataire Hivernant",""],
+  ["Baie Est","Côté Est","Q61T","54.92","MAXUM 29D2003","4700","25 x 8,5","Moteur","MOHAMED ANIS BAGHRICHE","514-554-8424","Locataire",""],
+  ["Mouillage","","M1","","CATAMARAN QC6233293","","29,11 x 8 x 5","Voilier","CHRISTIAN PETRIN","819-209-2052","Locataire Hivernant","E14"],
+  ["Mouillage","","M2","","SILENT SOUND","","44,6 x 12,6","Voilier","CAROLINE CHAMBERLAND","438-880-2276","Locataire Hivernant","E20"],
+  ["Mouillage","","M3","","LIBRE","","","Inconnu","","","Inconnu",""],
+  ["Mouillage","","M4","","VOILIER","8600","26 x 8 x 3,5","Voilier","GUY LANDRY","514-916-4927","Locataire","O38"],
+  ["Mouillage","","M5","","FAMILY OUTING","","32 x 9","Voilier","NICOLAS ROY-BOURDAGES","514-523-5572","Locataire Hivernant","O27"],
+  ["Mouillage","","M6","","DESEO","10000","34 x 11","Voilier","GILLES LEGER","514-347-9090","Locataire Hivernant","O14"],
+  ["Mouillage","","M7","","BILY BER","15000","39,6 x 13","Voilier","JACQUES LEMAIRE","514-278-9864","Membre Hivernant","O20"],
+  ["Mouillage","","M8","","SEPTEMBRE","3500","30,5 x 9","Inconnu","PATRICK MEILLEUR","514-863-4679","Membre Hivernant","P2"],
+  ["Mouillage","","M9","","VOILIER TRI MARIN","3500","27 x 8,5 x 3","Voilier","PATRICE GAUVIN","514-260-8048","Membre Hivernant","E1"],
+  ["Mouillage","","M10","","MONTEE CRISTO","24000","35","Voilier","PAUL CREVIER","514-836-8771","Locataire",""],
+  ["Mouillage","","M11","","LE BALEINEAU","","27,6 x 9","Voilier","CARLOS SANDOVAL","438-282-4254","Locataire Hivernant","O22"],
+  ["Mouillage","","M12","","GULFSTAR 42","25000","42 x 13,5 x 5,4","Inconnu","ERIC FOURNELLE","438-498-7600","Locataire Hivernant","E22"],
+  ["Mouillage","","M13","","EL MONA","16000","38,10 x 10 x 4,5","Voilier","STEPHEN ROY","438-871-1777","Membre Hivernant","O17"],
+  ["Mouillage","","M14","","GALACTICA","3500","33,5 x 11 x 4,5","Inconnu","FRANCIS BERGERON","450-674-1992","Locataire Hivernant","E15"],
+  ["Mouillage","","A1","","ANDIAMO IV","13000","35 x 11 x 4,6","Voilier","ANDREW CARON","","Membre Hivernant","O10"]
+];
+
+// Navigation structure
+const NAV = [
+  {label:"Toutes les sections", baie:"Toutes", cote:"Tous"},
+  {label:"Baie Ouest", baie:"Baie Ouest", cote:"Tous", children:[
+    {label:"Côté Ouest (Q0–Q6)", baie:"Baie Ouest", cote:"Côté Ouest"},
+    {label:"Côté Est (Q7–Q19)", baie:"Baie Ouest", cote:"Côté Est"},
+  ]},
+  {label:"Baie Est", baie:"Baie Est", cote:"Tous", children:[
+    {label:"Côté Ouest (Q30–Q45)", baie:"Baie Est", cote:"Côté Ouest"},
+    {label:"Côté Est (Q46–Q61)", baie:"Baie Est", cote:"Côté Est"},
+  ]},
+  {label:"Mouillage & Ancre", baie:"Mouillage", cote:"Tous"},
+];
+
+let SB = "Toutes", SC = "Tous", ACT = null;
+
+function tcls(t, n) {
+  if (!n || n === "LIBRE") return "tl";
+  if (t === "Voilier") return "tv";
+  if (t === "Moteur")  return "tm";
+  return "tu";
+}
+function bdgStyle(t, n) {
+  if (!n || n === "LIBRE") return "background:#F1EFE8;color:#5F5E5A";
+  if (t === "Voilier") return "background:#E1F5EE;color:#04342C";
+  if (t === "Moteur")  return "background:#FAEEDA;color:#412402";
+  return "background:#FCEBEB;color:#501313";
+}
+
+function buildNav() {
+  const el = document.getElementById("nav");
+  el.innerHTML = "";
+  NAV.forEach(item => {
+    const btn = document.createElement("button");
+    btn.className = "nt" + (item.baie === SB && item.cote === SC ? " on" : "");
+    btn.textContent = item.label;
+    btn.onclick = () => { SB = item.baie; SC = item.cote; buildNav(); go(); };
+    el.appendChild(btn);
+    if (item.children && item.baie === SB) {
+      const sub = document.createElement("div");
+      sub.className = "sub-tabs open";
+      item.children.forEach(c => {
+        const cb = document.createElement("button");
+        cb.className = "nt" + (c.baie === SB && c.cote === SC ? " on" : "");
+        cb.textContent = c.label;
+        cb.onclick = () => { SB = c.baie; SC = c.cote; buildNav(); go(); };
+        sub.appendChild(cb);
+      });
+      el.appendChild(sub);
+    }
+  });
+}
+
+function go() {
+  const q = document.getElementById("srch").value.toLowerCase();
+  const fil = DATA.filter(d => {
+    if (SB !== "Toutes" && d[0] !== SB) return false;
+    if (SC !== "Tous" && d[1] !== SC) return false;
+    if (q && !d[2].toLowerCase().includes(q) && !(d[4]||"").toLowerCase().includes(q) && !(d[8]||"").toLowerCase().includes(q)) return false;
+    return true;
+  });
+  buildStats(fil);
+  buildMain(fil);
+}
+
+function buildStats(fil) {
+  const v = fil.filter(d => d[7] === "Voilier").length;
+  const m = fil.filter(d => d[7] === "Moteur").length;
+  const u = fil.filter(d => d[7] === "Inconnu" && d[4] && d[4] !== "LIBRE").length;
+  const l = fil.filter(d => !d[4] || d[4] === "LIBRE").length;
+  document.getElementById("stats").innerHTML = [
+    [fil.length, "emplacements"], [v, "voiliers"],
+    [m, "moteurs"], [l, "libres"]
+  ].map(([n, lb]) => `<div class="stat"><div class="stat-n">${n}</div><div class="stat-l">${lb}</div></div>`).join('');
+}
+
+function buildMain(fil) {
+  const con = document.getElementById("main");
+  if (fil.length === 0) {
+    con.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><div>Aucun résultat</div></div>`;
+    return;
+  }
+  const secs = {};
+  fil.forEach(d => {
+    const k = d[0] + "||" + (d[1] || "");
+    if (!secs[k]) secs[k] = { baie: d[0], cote: d[1], items: [] };
+    secs[k].items.push(d);
+  });
+  con.innerHTML = "";
+  Object.values(secs).forEach(sec => {
+    const mou = sec.baie === "Mouillage";
+    const blk = document.createElement("div");
+    blk.className = "section-block";
+    const title = document.createElement("div");
+    title.className = "section-title";
+    const label = mou ? "Mouillage & Ancre" : (sec.baie + (sec.cote ? " — " + sec.cote : ""));
+    title.innerHTML = `${label} <span class="section-count">${sec.items.length}</span>`;
+    blk.appendChild(title);
+    const grid = document.createElement("div");
+    grid.className = "quais-grid";
+    sec.items.forEach(d => {
+      const n = d[4] || "";
+      const btn = document.createElement("button");
+      btn.className = "qb " + tcls(d[7], n) + (mou ? " mb" : "");
+      if (ACT && ACT.dataset.place === d[2]) btn.classList.add("selected");
+      btn.dataset.place = d[2];
+      const ns = document.createElement("span"); ns.className = "q-num"; ns.textContent = d[2];
+      const vs = document.createElement("span"); vs.className = "q-name";
+      vs.textContent = (!n || n === "LIBRE") ? "libre" : (n.length > 9 ? n.slice(0, 8) + "…" : n);
+      btn.append(ns, vs);
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".qb.selected").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        ACT = btn;
+        openPan(d);
+      });
+      grid.appendChild(btn);
+    });
+    blk.appendChild(grid);
+    con.appendChild(blk);
+  });
+}
+
+function copyTel(tel, btnId) {
+  navigator.clipboard.writeText(tel).then(() => {
+    const b = document.getElementById(btnId);
+    if (b) { b.textContent = "Copié!"; b.classList.add("ok"); setTimeout(() => { b.textContent = "Copier"; b.classList.remove("ok"); }, 2000); }
+  }).catch(() => {});
+}
+
+function openPan(d) {
+  const n = d[4] || "", t = d[7] || "";
+  const libre = !n || n === "LIBRE";
+  document.getElementById("pp-place").textContent = d[2] + (d[1] ? " — " + d[1] + ", " + d[0] : " — " + d[0]);
+  document.getElementById("pp-name").textContent = n || "Place libre";
+  const bdg = libre ? "Libre" : (t || "Inconnu");
+  document.getElementById("pp-badge").innerHTML = `<div style="padding:0 16px 4px"><span class="panel-badge" style="${bdgStyle(t,n)}">${bdg}</span></div>`;
+  const tel = d[9] || "";
+  const telId = "tc" + Date.now();
+  const telHtml = tel
+    ? `<div class="tel-block"><span class="tel-num">${tel}</span><button class="tel-copy" id="${telId}" onclick="copyTel('${tel}','${telId}')">Copier</button></div>`
+    : `<div class="prow"><span class="pk">Téléphone</span><span class="pv">—</span></div>`;
+
+  document.getElementById("pp-body").innerHTML = telHtml + [
+    ["Propriétaire", d[8] || "—"],
+    ["Statut", d[10] || "—"],
+    ["Poids", d[5] ? Number(d[5]).toLocaleString("fr-CA") + " lbs" : "—"],
+    ["Dimensions", d[6] || "—"],
+    ["Long. quai", d[3] ? d[3] + " pi" : "—"],
+    ["Place à terre", d[11] || "—"],
+  ].map(([k, v]) => `<div class="prow"><span class="pk">${k}</span><span class="pv">${v}</span></div>`).join('');
+
+  document.getElementById("panel").classList.add("open");
+}
+
+function closePan() {
+  document.getElementById("panel").classList.remove("open");
+  document.querySelectorAll(".qb.selected").forEach(b => b.classList.remove("selected"));
+  ACT = null;
+}
+
+// Init
+buildNav();
+go();
+</script>
+</body>
+</html>
