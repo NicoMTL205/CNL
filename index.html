@@ -113,6 +113,12 @@
   .tel-copy:hover{border-color:var(--blue);color:var(--blue);}
   .tel-copy.ok{border-color:var(--green);color:var(--green);}
   .sdiv{height:1px;background:var(--bg);margin:8px 0;}
+  .valid-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px;margin:10px 0 4px;}
+  .valid-ok{background:#E1F5EE;color:#04342C;}
+  .valid-non{background:#F1EFE8;color:#5F5E5A;}
+  .notes-block{background:#FFFBF0;border:1px solid #EF9F27;border-radius:var(--radius);padding:10px 12px;margin:10px 0 4px;}
+  .notes-title{font-size:10px;font-weight:600;color:#BA7517;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+  .notes-text{font-size:12px;color:var(--text);line-height:1.5;white-space:pre-wrap;}
 
   /* Bouton fermer en bas — visible seulement sur mobile */
   .panel-close-bottom{display:none;width:calc(100% - 30px);margin:12px 15px 16px;padding:11px;background:var(--navy);color:white;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;text-align:center;}
@@ -283,7 +289,7 @@ function parseCSV(text) {
     }
     cols.push(cur.trim());
     if (cols.length>=3 && cols.some(v=>v))
-      rows.push(cols.slice(0,14).map(v=>v.replace(/^"|"$/g,'').trim()));
+      rows.push(cols.slice(0,15).map(v=>v.replace(/^"|"$/g,'').trim()));
   }
   return rows;
 }
@@ -419,12 +425,21 @@ function openPan(d) {
       <div class="dim-cell"><div class="dim-val">${lar||"\u2014"}</div><div class="dim-lbl">Largeur (pi)</div></div>
       <div class="dim-cell"><div class="dim-val">${tir||"\u2014"}</div><div class="dim-lbl">Tirant d'eau (pi)</div></div>
       </div></div>` : "";
+  const valid = d[13]||"";
+  const notes = d[14]||"";
+  const validHtml = valid
+    ? `<div class="sdiv"></div><div class="valid-badge ${valid.toLowerCase()==='ok'?'valid-ok':'valid-non'}">${valid.toLowerCase()==='ok'?'&#10003; Valid\u00e9 Nancy':'&#9711; ' + valid}</div>`
+    : "";
+  const notesHtml = notes
+    ? `<div class="notes-block"><div class="notes-title">Notes</div><div class="notes-text">${notes}</div></div>`
+    : "";
   document.getElementById("pp-body").innerHTML=
     telHtml+
     [["Propri\u00e9taire",d[10]||"\u2014"],["Statut",d[12]||"\u2014"],
      ["Poids",d[5]?Number(d[5].replace(',','.')).toLocaleString("fr-CA")+" lbs":"\u2014"],
-     ["Long. quai",d[3]?d[3]+" pi":"\u2014"],["Place \u00e0 terre",d[13]||"\u2014"]]
-    .map(([k,v])=>`<div class="prow"><span class="pk">${k}</span><span class="pv">${v}</span></div>`).join('')+dimsHtml;
+     ["Long. quai",d[3]?d[3]+" pi":"\u2014"]]
+    .map(([k,v])=>`<div class="prow"><span class="pk">${k}</span><span class="pv">${v}</span></div>`).join('')+
+    validHtml+dimsHtml+notesHtml;
   document.getElementById("panel").classList.add("open");
   document.getElementById("overlay").classList.add("on");
 }
