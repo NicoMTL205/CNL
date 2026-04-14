@@ -118,6 +118,8 @@
   .valid-ok{background:#E1F5EE;color:#04342C;}
   .valid-pending{background:#F1EFE8;color:#5F5E5A;}
   .notes-block{background:#FFFBF0;border:1px solid #EF9F27;border-radius:var(--radius);padding:10px 12px;margin:10px 0 2px;}
+  .notes-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;}
+  .notes-label{font-size:10px;font-weight:600;color:#BA7517;text-transform:uppercase;letter-spacing:.05em;}
   .notes-title{font-size:10px;font-weight:600;color:#BA7517;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
   .notes-text{font-size:12px;color:var(--text);line-height:1.5;white-space:pre-wrap;}
 
@@ -428,23 +430,18 @@ function openPan(d) {
       </div></div>` : "";
   const valid = d[14]||"";
   const notes = d[15]||"";
-  const validHtml = `<div class="sdiv"></div><div class="valid-row"><span class="pk">Validation Nancy</span>${
-    valid.toLowerCase()==='ok'
-      ? `<span class="valid-badge valid-ok">&#10003; Valid&#233;</span>`
-      : valid
-        ? `<span class="valid-badge valid-pending">${valid}</span>`
-        : `<span class="pv">&mdash;</span>`
-  }</div>`;
-  const notesHtml = notes
-    ? `<div class="notes-block"><div class="notes-title">Notes</div><div class="notes-text">${notes}</div></div>`
-    : "";
+  const hasBox = valid || notes;
+  const notesHtml = hasBox ? `<div class="sdiv"></div><div class="notes-block">
+    ${valid ? `<div class="notes-row"><span class="notes-label">Validation Nancy</span><span class="valid-badge ${valid.toLowerCase()==='ok'?'valid-ok':'valid-pending'}">${valid.toLowerCase()==='ok'?'&#10003; Valid&#233;':valid}</span></div>` : ''}
+    ${notes ? `${valid?'<div style="height:6px"></div>':''}<div class="notes-title">Notes</div><div class="notes-text">${notes}</div>` : ''}
+  </div>` : "";
   document.getElementById("pp-body").innerHTML=
     telHtml+
     [["Propri\u00e9taire",d[10]||"\u2014"],["Statut",d[12]||"\u2014"],
      ["Poids",d[5]?Number(d[5].replace(',','.')).toLocaleString("fr-CA")+" lbs":"\u2014"],
      ["Long. quai",d[3]?d[3]+" pi":"\u2014"]]
     .map(([k,v])=>`<div class="prow"><span class="pk">${k}</span><span class="pv">${v}</span></div>`).join('')+
-    validHtml+dimsHtml+notesHtml;
+    notesHtml+dimsHtml;
   document.getElementById("panel").classList.add("open");
   document.getElementById("overlay").classList.add("on");
 }
