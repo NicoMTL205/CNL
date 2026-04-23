@@ -67,12 +67,12 @@
   .section-title{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:11px;display:flex;align-items:center;gap:8px;}
   .section-count{font-size:10px;background:var(--blue-light);color:var(--blue);padding:2px 7px;border-radius:10px;font-weight:500;}
   .quais-grid{display:flex;flex-wrap:wrap;gap:5px;}
-  .qb{display:flex;flex-direction:column;align-items:center;justify-content:center;width:72px;min-height:66px;padding:5px 3px;border-radius:7px;border:1.5px solid transparent;cursor:pointer;transition:transform .1s,box-shadow .1s;text-align:center;line-height:1.25;}
+  .qb{display:flex;flex-direction:column;align-items:center;justify-content:center;width:110px;min-height:66px;padding:6px 5px;border-radius:7px;border:1.5px solid transparent;cursor:pointer;transition:transform .1s,box-shadow .1s;text-align:center;line-height:1.25;}
   .qb:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1);}
   .qb.selected{outline:2.5px solid var(--navy);outline-offset:2px;}
   .q-num{font-size:9px;font-weight:600;opacity:.6;margin-bottom:1px;}
-  .q-name{font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:66px;}
-  .q-owner{font-size:9px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:66px;margin-top:2px;}
+  .q-name{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:102px;}
+  .q-owner{font-size:10px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:102px;margin-top:2px;}
   .q-len{font-size:8px;opacity:.55;margin-top:1px;}
   .tv{background:var(--green-bg);border-color:var(--green);color:var(--green-text);}
   .tm{background:var(--amber-bg);border-color:var(--amber);color:var(--amber-text);}
@@ -390,10 +390,10 @@ function buildMain(fil) {
       btn.dataset.place=d[2];
       const ns=document.createElement("span"); ns.className="q-num"; ns.textContent=d[2];
       const vs=document.createElement("span"); vs.className="q-name";
-      vs.textContent=(!n||n==="LIBRE")?"libre":(n.length>9?n.slice(0,8)+"\u2026":n);
+      vs.textContent=(!n||n==="LIBRE")?"libre":(n.length>13?n.slice(0,12)+"\u2026":n);
       const os=document.createElement("span"); os.className="q-owner";
       const own=d[10]||"";
-      os.textContent=own?(own.length>9?own.slice(0,8)+"\u2026":own):"";
+      os.textContent=own?(own.length>13?own.slice(0,12)+"\u2026":own):"";
       const ls=document.createElement("span"); ls.className="q-len";
       ls.textContent=d[3]?d[3]+" pi":"";
       btn.append(ns,vs,os,ls);
